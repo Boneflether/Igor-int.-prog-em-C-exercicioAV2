@@ -1,34 +1,36 @@
+//Parte 1- implementação de thread
 #include <stdio.h>
-#include <unistd.h>
-#include <errno.h>
 #include <stdlib.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+void Pidfilho() {
+    printf("pid do filho: %d\n", getpid());
+}
+
+void Pidpai() {
+    printf("pid do pai: %d\n", getpid());
+}
+
+void erro() {
+    perror("fork");
+    exit(1);
+}
 
 int main(){
-    pid_t iPid;
-    printf("\nDuplicando o processo\n");
+    int i;
+    pid_t pid;
     
-    iPid = fork();
-    if(iPid < 0){
-        perror("Error");
-        exit(errno);
-    }
-    if(iPid != 0){ /*este trecho de codigo sera executado apenas no pai */
-    printf("\nCodigo executado no processo pai\n");
-    printf("\nPAI -Processo pai. PID |%d| \n", getpid());
-    printf("\nPAI -Processo filho. PID |%d| \n", iPid);
-    }else{
-    printf("\nCodigo exectado pelo filho");
-    }
-//este trecho de codigo sera executado apenas no filho, embora o comando if esteja disponivel para o pai*/
-    if(iPid == 0){
-        printf("\nCodigo executado no processo filho\n");
-        printf("\nFILHO-Processo pai. PID:|%d|\n", getppid());
-        printf("\nFILHO-Processo filho. PID |%d|\n", getpid()); 
+    if ((pid = fork()) < 0){
+        erro();
+}
+    if (pid == 0) {
+        Pidfilho();
     }
     else{
-        printf("\nCodigo executado pelo pai");
-    }    
-    //este cÃ³digo esta disponivel no pai e no filho
-    printf("\nEsta mensagem sera impressa 2 vezes");
-    return 0;
+        Pidpai();
+    }
+    printf("este print sera executado por ambos processos\n\n");
+    
+    exit(0);
 }
